@@ -1,0 +1,208 @@
+[
+    {
+      "extension": ".go",
+      "keys": [
+        "break", "case", "chan", "const", "continue", "default", "defer", "else", "fallthrough",
+        "for", "func", "go", "goto", "if", "import", "interface", "map", "package", "range",
+        "return", "select", "struct", "switch", "type", "var"
+      ]
+    },
+    {
+      "extension": ".json",
+      "keys": [
+        "object", "array", "string", "number", "boolean", "null"
+      ]
+    },
+    {
+      "extension": ".html",
+      "keys": [
+        "html", "head", "body", "title", "h1", "p", "a", "div", "span", "img", "ul", "ol", "li"
+      ]
+    },
+    {
+      "extension": ".xml",
+      "keys": [
+        "xml", "element", "attribute", "node", "document", "namespace"
+      ]
+    },
+    {
+      "extension": ".js",
+      "keys": [
+        "break", "case", "catch", "class", "const", "continue", "debugger", "default", "delete", 
+        "do", "else", "export", "extends", "finally", "for", "function", "if", "import", "in", 
+        "instanceof", "let", "new", "return", "super", "switch", "this", "throw", "try", "typeof", 
+        "var", "void", "while", "with", "yield"
+      ]
+    },
+    {
+      "extension": ".cpp",
+      "keys": [
+        "alignas", "alignof", "and", "and_eq", "asm", "auto", "bitand", "bitor", "bool", "break", 
+        "case", "catch", "char", "class", "compl", "const", "constexpr", "continue", "decltype", 
+        "default", "delete", "do", "double", "dynamic_cast", "else", "enum", "explicit", "export", 
+        "extern", "false", "final", "float", "for", "friend", "goto", "if", "inline", "int", "long", 
+        "mutable", "namespace", "new", "noexcept", "not", "not_eq", "nullptr", "operator", "or", 
+        "or_eq", "private", "protected", "public", "reflexpr", "register", "reinterpret_cast", 
+        "return", "short", "signed", "sizeof", "static", "static_assert", "static_cast", "struct", 
+        "switch", "template", "this", "throw", "true", "try", "typedef", "typeid", "typename", "union", 
+        "unsigned", "using", "virtual", "void", "volatile", "wchar_t", "while"
+      ]
+    },
+    {
+        "extension": ".php",
+        "keys": [
+          "abstract", "and", "array", "as", "break", "case", "catch", "class", "clone", "const", "continue",
+          "declare", "default", "do", "echo", "else", "elseif", "empty", "enddeclare", "endfor", "endforeach", 
+          "endif", "endswitch", "endwhile", "eval", "exit", "extends", "final", "finally", "for", "foreach", 
+          "function", "global", "goto", "if", "implements", "include", "include_once", "instanceof", "insteadof", 
+          "interface", "isset", "list", "namespace", "new", "or", "private", "protected", "public", "require", 
+          "require_once", "return", "static", "switch", "throw", "trait", "try", "unset", "use", "var", "while"
+        ]
+      },
+      {
+        "extension": ".c",
+        "keys": [
+          "auto", "break", "case", "char", "const", "continue", "default", "do", "double", "else", "enum", "extern",
+          "float", "for", "goto", "if", "inline", "int", "long", "register", "restrict", "return", "short", "signed", 
+          "sizeof", "static", "struct", "switch", "typedef", "union", "unsigned", "void", "volatile", "while"
+        ]
+      },
+      {
+        "extension": ".java",
+        "keys": [
+          "abstract", "assert", "boolean", "break", "byte", "case", "catch", "char", "class", "const", "continue", 
+          "default", "do", "double", "else", "enum", "extends", "final", "finally", "float", "for", "goto", "if", 
+          "implements", "import", "instanceof", "int", "interface", "long", "native", "new", "null", "package", 
+          "private", "protected", "public", "return", "short", "static", "strictfp", "super", "switch", "synchronized", 
+          "this", "throw", "throws", "transient", "try", "void", "volatile", "while"
+        ]
+      },
+      {
+        "extension": ".py",
+        "keys": [
+          "and", "as", "assert", "async", "await", "break", "class", "continue", "def", "del", "elif", "else", 
+          "except", "finally", "for", "from", "global", "if", "import", "in", "is", "lambda", "nonlocal", 
+          "not", "or", "pass", "raise", "return", "try", "while", "with", "yield"
+        ]
+      },
+      {
+        "extension": ".bash",
+        "keys": [
+          "if", "then", "else", "elif", "fi", "for", "do", "done", "in", "while", "until", "function", "return", 
+          "exit", "break", "continue", "select", "case", "esac", "test", "[[", "]]", "$", "$?", "$#", "shift", 
+          "source", "echo", "export", "set", "unset", "trap", "readonly", "alias", "bg", "fg", "jobs", "wait"
+        ]
+      },
+      {
+        "extension": ".rs",
+        "keys": [
+          "as", "async", "await", "box", "break", "const", "continue", "crate", "dyn", "else", "enum", "extern", 
+          "false", "fn", "for", "if", "impl", "in", "let", "loop", "match", "mod", "move", "mut", "pub", "ref", 
+          "return", "self", "static", "struct", "super", "trait", "true", "type", "unsafe", "use", "where", 
+          "while"
+        ]
+      },
+      {
+        "extension": ".pl",
+        "keys": [
+          "alias", "and", "BEGIN", "binmode", "break", "caller", "chdir", "chmod", "chomp", "chop", "close", 
+          "connect", "continue", "eval", "exec", "exists", "exit", "for", "format", "if", "init", "join", 
+          "keys", "last", "my", "next", "package", "print", "require", "return", "sub", "syscall", "use", "while"
+        ]
+      },
+      {
+        "extension": ".swift",
+        "keys": [
+          "as", "associativity", "break", "case", "catch", "class", "continue", "default", "defer", "do", "else", 
+          "enum", "extension", "fallthrough", "for", "func", "guard", "if", "import", "in", "init", "inout", 
+          "internal", "let", "mutating", "namespace", "operator", "private", "protocol", "public", "rethrows", 
+          "return", "self", "static", "struct", "subscript", "super", "switch", "throw", "throws", "try", "var", 
+          "while"
+        ]
+      },
+      {
+        "extension": ".kt",
+        "keys": [
+          "abstract", "as", "as?", "break", "class", "companion", "constructor", "continue", "data", "do", 
+          "else", "enum", "external", "false", "finally", "for", "fun", "if", "import", "in", "init", "interface", 
+          "internal", "is", "null", "object", "open", "operator", "out", "private", "protected", "public", "return", 
+          "sealed", "super", "this", "throw", "try", "true", "typealias", "val", "var", "when", "while"
+        ]
+      },
+      {
+        "extension": ".ts",
+        "keys": [
+          "abstract", "any", "as", "asserts", "async", "await", "boolean", "break", "case", "catch", "class", "const", "constructor", "continue", "declare", "default", "delete", "do", "else", "enum", "export", "extends", "false", "finally", "for", "from", "get", "if", "implements", "import", "in", "infer", "instanceof", "interface", "let", "module", "namespace", "never", "new", "null", "number", "object", "of", "package", "private", "protected", "public", "readonly", "require", "return", "set", "static", "string", "super", "switch", "symbol", "this", "throw", "try", "true", "type", "typeof", "var", "void", "while", "with", "yield"
+        ]
+      },
+      {
+        "extension": ".m",
+        "keys": [
+          "alignas", "alignof", "and", "autoreleasepool", "break", "case", "class", "continue", "do", "else", "enum", "extends", "false", "for", "if", "import", "in", "instancetype", "interface", "nil", "nonnull", "null", "objc", "optional", "return", "self", "super", "switch", "throw", "true", "try", "typedef", "union", "var", "while", "with"
+        ]
+      },
+      {
+        "extension": ".lua",
+        "keys": [
+          "and", "break", "do", "else", "elseif", "end", "false", "for", "function", "if", "in", "local", "nil", "not", "or", "repeat", "return", "then", "true", "until", "while"
+        ]
+      },
+      {
+        "extension": ".r",
+        "keys": [
+          "if", "else", "for", "while", "repeat", "function", "return", "break", "next", "TRUE", "FALSE", "NA", "NULL", "Inf", "is", "in", "try", "catch", "library", "require", "load", "print", "cat"
+        ]
+      },{
+        "extension": ".scala",
+        "keys": [
+          "abstract", "case", "catch", "class", "def", "do", "else", "extends", "false", "final", "finally", "for", "if", "import", "match", "native", "new", "null", "object", "override", "package", "private", "protected", "return", "sealed", "super", "this", "throw", "trait", "try", "true", "type", "val", "var", "while", "with"
+        ]
+      },
+      {
+        "extension": ".hs",
+        "keys": [
+          "case", "class", "data", "default", "deriving", "do", "else", "elseif", "end", "false", "for", "if", "import", "in", "infix", "instance", "let", "loop", "module", "newtype", "not", "of", "otherwise", "return", "then", "true", "type", "where"
+        ]
+      },
+      {
+        "extension": ".go",
+        "keys": [
+          "break", "case", "chan", "const", "continue", "default", "defer", "else", "fallthrough", "for", "func", "go", "goto", "if", "import", "interface", "map", "package", "range", "return", "select", "struct", "switch", "type", "var"
+        ]
+      },
+      {
+        "extension": ".ex",
+        "keys": [
+          "alias", "and", "defmodule", "do", "else", "end", "false", "for", "if", "import", "in", "match", "module", "nil", "not", "or", "raise", "receive", "true", "try", "unless", "when", "while", "with"
+        ]
+      },
+      {
+        "extension": ".jl",
+        "keys": [
+          "abstract", "begin", "break", "catch", "const", "continue", "do", "else", "elseif", "end", "false", "for", "function", "if", "import", "in", "macro", "module", "new", "return", "try", "true", "type", "while"
+        ]
+      },
+      {
+        "extension": ".fs",
+        "keys": [
+          "abstract", "and", "as", "assert", "base", "begin", "break", "class", "comp", "do", "done", "else", "end", "exception", "false", "for", "function", "if", "in", "let", "match", "module", "mutable", "namespace", "new", "not", "open", "private", "rec", "return", "then", "true", "type", "val", "when", "while"
+        ]
+      },
+      {
+        "extension": ".dart",
+        "keys": [
+          "abstract", "as", "assert", "async", "await", "break", "case", "catch", "class", "const", "continue", "default", "do", "else", "enum", "extends", "false", "final", "finally", "for", "if", "import", "in", "is", "library", "new", "null", "return", "static", "super", "switch", "this", "throw", "try", "true", "var", "void", "while", "with"
+        ]
+      },
+      {
+        "extension": ".sh",
+        "keys": [
+          "alias", "bg", "break", "case", "cd", "continue", "do", "done", "elif", "else", "esac", "eval", "exit", "export", "false", "fi", "for", "function", "if", "in", "let", "local", "logout", "mapfile", "return", "select", "set", "shift", "source", "test", "then", "true", "unset", "until", "while"
+        ]
+      }
+            
+    
+    
+  ]
+  
+  

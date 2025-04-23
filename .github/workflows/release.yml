@@ -43,43 +43,29 @@ jobs:
           dpkg-deb --build myapp
           mv myapp.deb dist/change_case_linux.deb
 
-      - name: Create Arch Linux package (only on Linux)
-        if: matrix.goos == 'linux'
-        run: |
-          VERSION=${GITHUB_REF_NAME#v}
-          mkdir -p pkgbuild/src
-          mkdir -p pkgbuild/pkg/change-case/usr/local/bin
-          cp dist/change_case_linux pkgbuild/pkg/change-case/usr/local/bin/change_case
-          
-          cat <<EOF > pkgbuild/PKGBUILD
-          pkgname=change-case
-          pkgver=$VERSION
-          pkgrel=1
-          arch=('x86_64')
-          pkgdesc="CLI to change case"
-          license=('MIT')
-          url="https://github.com/yourusername/yourrepo"
-          depends=()
-          source=()
-          build() {
-            :
-          }
-          package() {
-            install -Dm755 "\$srcdir"/../pkg/change-case/usr/local/bin/change_case "\$pkgdir"/usr/local/bin/change_case
-          }
-          EOF
-          cd pkgbuild
-          makepkg --nobuild --packagelist
-          BS_DIR=$(makepkg --packagelist)
-          BS_NAME=$(basename $BS_DIR)
-          cd ..
-          mv pkgbuild/$BS_NAME dist/change_case_linux.pkg.tar.zst
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: dist-${{ matrix.goos }}
-          path: dist/*
+          - name: Create Arch Linux package (only on Linux)
+          if: matrix.goos == 'linux'
+          run: |
+            VERSION=${GITHUB_REF_NAME#v}
+            mkdir -p pkgbuild
+            cat <<EOF > pkgbuild/PKGBUILD
+            pkgname=change-case
+            pkgver=$VERSION
+            pkgrel=1
+            arch=('x86_64')
+            pkgdesc="CLI to change case"
+            license=('MIT')
+            url="https://github.com/yourusername/yourrepo"
+            source=("change_case_linux")
+            build() {
+                install -Dm755 "\$srcdir/change_case_linux" "\$pkgdir/usr/local/bin/change_case"
+            }
+            EOF
+            cp dist/change_case_linux pkgbuild/
+            cd pkgbuild
+            makepkg --force --nodeps --noconfirm
+            mv *.pkg.tar.zst ../dist/
+        
 
   release:
     runs-on: ubuntu-latest

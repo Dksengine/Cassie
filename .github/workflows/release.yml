@@ -32,8 +32,10 @@ jobs:
         if: matrix.goos == 'linux'
         run: |
           mkdir -p myapp/DEBIAN
+          # Remove 'v' from version for Debian compatibility
+          VERSION=${GITHUB_REF_NAME#v}
           echo "Package: change-case" > myapp/DEBIAN/control
-          echo "Version: ${GITHUB_REF_NAME}" >> myapp/DEBIAN/control
+          echo "Version: $VERSION" >> myapp/DEBIAN/control
           echo "Architecture: amd64" >> myapp/DEBIAN/control
           echo "Maintainer: You <labs@dksengine.com>" >> myapp/DEBIAN/control
           echo "Description: CLI to change case" >> myapp/DEBIAN/control

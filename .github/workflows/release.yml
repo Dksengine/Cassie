@@ -33,7 +33,6 @@ jobs:
         if: matrix.goos == 'linux'
         run: |
           mkdir -p myapp/DEBIAN
-          # Remove 'v' from version for compatibility
           VERSION=${GITHUB_REF_NAME#v}
           echo "Package: cassie" > myapp/DEBIAN/control
           echo "Version: $VERSION" >> myapp/DEBIAN/control
@@ -41,16 +40,23 @@ jobs:
           echo "Maintainer: You <labs@dksengine.com>" >> myapp/DEBIAN/control
           echo "Description: CLI to change case" >> myapp/DEBIAN/control
           mkdir -p myapp/usr/local/bin
-          cp dist/cassie_linux myapp/usr/local/bin/cassie
+          cp dist/cassie_${{ matrix.goos }}${EXT} myapp/usr/local/bin/cassie
           dpkg-deb --build myapp
-          mv myapp.deb dist/cassie_linux.deb
+          mv myapp.deb dist/cassie_${{ matrix.goos }}.deb
+
+      # Install fpm
+      - name: Install fpm
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ruby ruby-dev gcc make
+          sudo gem install --no-document fpm
 
       # Create .rpm package for Fedora (only on Fedora)
       - name: Create .rpm package (only on Fedora)
         if: matrix.goos == 'linux'
         run: |
           mkdir -p myapp/usr/local/bin
-          cp dist/cassie_linux myapp/usr/local/bin/cassie
+          cp dist/cassie_${{ matrix.goos }}${EXT} myapp/usr/local/bin/cassie
           fpm -s dir -t rpm -n cassie -v $VERSION --prefix /usr/local myapp/usr/local/bin/cassie
           mv cassie-$VERSION-1.x86_64.rpm dist/cassie_fedora.rpm
 
@@ -59,7 +65,7 @@ jobs:
         if: matrix.goos == 'linux'
         run: |
           mkdir -p myapp/usr/local/bin
-          cp dist/cassie_linux myapp/usr/local/bin/cassie
+          cp dist/cassie_${{ matrix.goos }}${EXT} myapp/usr/local/bin/cassie
           fpm -s dir -t pacman -n cassie -v $VERSION --prefix /usr/local myapp/usr/local/bin/cassie
           mv cassie-$VERSION-1-x86_64.pkg.tar.zst dist/cassie_arch.pkg.tar.zst
 
@@ -69,18 +75,3 @@ jobs:
         run: |
           mkdir -p dist
           GOOS=windows GOARCH=amd64 go build -o dist/cassie_windows.exe main.go
-
-  release:
-    runs-on: ubuntu-latest
-    needs: build
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/download-artifact@v4
-        with:
-          path: dist
-
-      - name: Upload release
-        uses: softprops/action-gh-release@v1
-        with:
-          files: dist/**/*

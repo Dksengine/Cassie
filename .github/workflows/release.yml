@@ -44,30 +44,116 @@ jobs:
           dpkg-deb --build myapp
           mv myapp.deb dist/cassie_${{ matrix.goos }}.deb
 
-      # Install fpm
-      - name: Install fpm
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y ruby ruby-dev gcc make
-          sudo gem install --no-document fpm
-
-      # Create .rpm package for Fedora (only on Fedora)
-      - name: Create .rpm package (only on Fedora)
+       # Create .rpm package for Fedora
+      - name: Create .rpm package (only on Linux)
         if: matrix.goos == 'linux'
         run: |
-          mkdir -p myapp/usr/local/bin
-          cp dist/cassie_${{ matrix.goos }}${EXT} myapp/usr/local/bin/cassie
-          fpm -s dir -t rpm -n cassie -v $VERSION --prefix /usr/local myapp/usr/local/bin/cassie
-          mv cassie-$VERSION-1.x86_64.rpm dist/cassie_fedora.rpm
+          VERSION=${GITHUB_REF_NAME#v}
+          mkdir -p rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
+          mkdir -p cassie-rpm/usr/local/bin
+          cp dist/cassie_linux cassie-rpm/usr/local/bin/cassie
+          tar -czvf rpmbuild/SOURCES/cassie.tar.gz -C cassie-rpm .
+          echo "
+          Name: cassie
+          Version: $VERSION
+          Release: 1
+          Summary: CLI to change case
+          License: MIT
+          Group: Development/Tools
+          BuildArch: x86_64
+          %description
+          CLI to change case
+          %prep
+          %setup -q -c -T
+          %install
+          mkdir -p %{buildroot}/usr/local/bin
+          cp -a * %{buildroot}/usr/local/bin/
+          %files
+          /usr/local/bin/cassie
+          %changelog
+          " > rpmbuild/SPECS/cassie.spec
+          rpmbuild -bb rpmbuild/SPECS/cassie.spec
+          find rpmbuild/RPMS -name "*.rpm" -exec mv {} dist/ \;
 
-      # Create Arch package for Arch Linux (only on Arch)
-      - name: Create Arch package (only on Arch)
+      # Create Arch Linux package (PKG.TAR.ZST)
+      - name: Create Arch Linux package (only on Linux)
         if: matrix.goos == 'linux'
         run: |
-          mkdir -p myapp/usr/local/bin
-          cp dist/cassie_${{ matrix.goos }}${EXT} myapp/usr/local/bin/cassie
-          fpm -s dir -t pacman -n cassie -v $VERSION --prefix /usr/local myapp/usr/local/bin/cassie
-          mv cassie-$VERSION-1-x86_64.pkg.tar.zst dist/cassie_arch.pkg.tar.zst
+          VERSION=${GITHUB_REF_NAME#v}
+          mkdir -p cassie-arch/pkg/cassie/usr/local/bin
+          mkdir -p cassie-arch/src
+          cp dist/cassie_linux cassie-arch/pkg/cassie/usr/local/bin/cassie
+          cd cassie-arch
+          echo "
+          pkgname=cassie
+          pkgver=$VERSION
+          pkgrel=1
+          pkgdesc='CLI to change case'
+          arch=('x86_64')
+          license=('MIT')
+          source=()
+          package() {
+            install -Dm755 pkg/cassie/usr/local/bin/cassie \"\$pkgdir/usr/local/bin/cassie\"
+          }
+          " > PKGBUILD
+          tar -czf cassie-${VERSION}-1-x86_64.pkg.tar.gz -C pkg/cassie .
+          mv cassie-${VERSION}-1-x86_64.pkg.tar.gz ../dist/
+        # Create .rpm package for Fedora
+      - name: Create .rpm package (only on Linux)
+        if: matrix.goos == 'linux'
+        run: |
+          VERSION=${GITHUB_REF_NAME#v}
+          mkdir -p rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
+          mkdir -p cassie-rpm/usr/local/bin
+          cp dist/cassie_linux cassie-rpm/usr/local/bin/cassie
+          tar -czvf rpmbuild/SOURCES/cassie.tar.gz -C cassie-rpm .
+          echo "
+          Name: cassie
+          Version: $VERSION
+          Release: 1
+          Summary: CLI to change case
+          License: MIT
+          Group: Development/Tools
+          BuildArch: x86_64
+          %description
+          CLI to change case
+          %prep
+          %setup -q -c -T
+          %install
+          mkdir -p %{buildroot}/usr/local/bin
+          cp -a * %{buildroot}/usr/local/bin/
+          %files
+          /usr/local/bin/cassie
+          %changelog
+          " > rpmbuild/SPECS/cassie.spec
+          rpmbuild -bb rpmbuild/SPECS/cassie.spec
+          find rpmbuild/RPMS -name "*.rpm" -exec mv {} dist/ \;
+
+        # Create Arch Linux package (PKG.TAR.ZST)
+      - name: Create Arch Linux package (only on Linux)
+        if: matrix.goos == 'linux'
+        run: |
+          VERSION=${GITHUB_REF_NAME#v}
+          mkdir -p cassie-arch/pkg/cassie/usr/local/bin
+          mkdir -p cassie-arch/src
+          cp dist/cassie_linux cassie-arch/pkg/cassie/usr/local/bin/cassie
+          cd cassie-arch
+          echo "
+          pkgname=cassie
+          pkgver=$VERSION
+          pkgrel=1
+          pkgdesc='CLI to change case'
+          arch=('x86_64')
+          license=('MIT')
+          source=()
+          package() {
+            install -Dm755 pkg/cassie/usr/local/bin/cassie \"\$pkgdir/usr/local/bin/cassie\"
+          }
+          " > PKGBUILD
+          tar -czf cassie-${VERSION}-1-x86_64.pkg.tar.gz -C pkg/cassie .
+          mv cassie-${VERSION}-1-x86_64.pkg.tar.gz ../dist/
+
+
 
       # Create Windows .exe binary (only on Windows)
       - name: Create Windows .exe binary (only on Windows)

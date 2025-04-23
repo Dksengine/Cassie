@@ -26,7 +26,7 @@ jobs:
           if [ "${{ matrix.goos }}" == "windows" ]; then
             EXT=".exe"
           fi
-          GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -o dist/change_case_${{ matrix.goos }}${EXT} main.go
+          GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -o dist/cassie_${{ matrix.goos }}${EXT} main.go
 
       - name: Create .deb package (only on Linux)
         if: matrix.goos == 'linux'
@@ -40,9 +40,9 @@ jobs:
           echo "Maintainer: You <labs@dksengine.com>" >> myapp/DEBIAN/control
           echo "Description: CLI to change case" >> myapp/DEBIAN/control
           mkdir -p myapp/usr/local/bin
-          cp dist/change_case_linux myapp/usr/local/bin/change_case
+          cp dist/cassie_linux myapp/usr/local/bin/cassie
           dpkg-deb --build myapp
-          mv myapp.deb dist/change_case_linux.deb
+          mv myapp.deb dist/cassie_linux.deb
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4

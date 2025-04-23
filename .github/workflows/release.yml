@@ -26,160 +26,72 @@ jobs:
           if [ "${{ matrix.goos }}" == "windows" ]; then
             EXT=".exe"
           fi
-          GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -o dist/cassie_${{ matrix.goos }}${EXT} main.go
+          GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -o dist/change_case_${{ matrix.goos }}${EXT} main.go
 
-      # Create .deb package for Ubuntu (only on Ubuntu)
-      - name: Create .deb package (only on Ubuntu)
+      - name: Create .deb package (only on Linux)
         if: matrix.goos == 'linux'
         run: |
           mkdir -p myapp/DEBIAN
           VERSION=${GITHUB_REF_NAME#v}
-          echo "Package: cassie" > myapp/DEBIAN/control
+          echo "Package: change-case" > myapp/DEBIAN/control
           echo "Version: $VERSION" >> myapp/DEBIAN/control
           echo "Architecture: amd64" >> myapp/DEBIAN/control
           echo "Maintainer: You <labs@dksengine.com>" >> myapp/DEBIAN/control
           echo "Description: CLI to change case" >> myapp/DEBIAN/control
           mkdir -p myapp/usr/local/bin
-          cp dist/cassie_${{ matrix.goos }}${EXT} myapp/usr/local/bin/cassie
+          cp dist/change_case_linux myapp/usr/local/bin/change_case
           dpkg-deb --build myapp
-          mv myapp.deb dist/cassie_${{ matrix.goos }}.deb
+          mv myapp.deb dist/change_case_linux.deb
 
-       # Create .rpm package for Fedora
-      - name: Create .rpm package (only on Linux)
-        if: matrix.goos == 'linux'
-        run: |
-          VERSION=${GITHUB_REF_NAME#v}
-          mkdir -p rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
-          mkdir -p cassie-rpm/usr/local/bin
-          cp dist/cassie_linux cassie-rpm/usr/local/bin/cassie
-          tar -czvf rpmbuild/SOURCES/cassie.tar.gz -C cassie-rpm .
-          echo "
-          Name: cassie
-          Version: $VERSION
-          Release: 1
-          Summary: CLI to change case
-          License: MIT
-          Group: Development/Tools
-          BuildArch: x86_64
-          %description
-          CLI to change case
-          %prep
-          %setup -q -c -T
-          %install
-          mkdir -p %{buildroot}/usr/local/bin
-          cp -a * %{buildroot}/usr/local/bin/
-          %files
-          /usr/local/bin/cassie
-          %changelog
-          " > rpmbuild/SPECS/cassie.spec
-          rpmbuild -bb rpmbuild/SPECS/cassie.spec
-          find rpmbuild/RPMS -name "*.rpm" -exec mv {} dist/ \;
-
-      # Create Arch Linux package (PKG.TAR.ZST)
       - name: Create Arch Linux package (only on Linux)
         if: matrix.goos == 'linux'
         run: |
           VERSION=${GITHUB_REF_NAME#v}
-          mkdir -p cassie-arch/pkg/cassie/usr/local/bin
-          mkdir -p cassie-arch/src
-          cp dist/cassie_linux cassie-arch/pkg/cassie/usr/local/bin/cassie
-          cd cassie-arch
-          echo "
-          pkgname=cassie
+          mkdir -p pkgbuild/src
+          mkdir -p pkgbuild/pkg/change-case/usr/local/bin
+          cp dist/change_case_linux pkgbuild/pkg/change-case/usr/local/bin/change_case
+          
+          cat <<EOF > pkgbuild/PKGBUILD
+          pkgname=change-case
           pkgver=$VERSION
           pkgrel=1
-          pkgdesc='CLI to change case'
           arch=('x86_64')
+          pkgdesc="CLI to change case"
           license=('MIT')
+          url="https://github.com/yourusername/yourrepo"
+          depends=()
           source=()
-          package() {
-            install -Dm755 pkg/cassie/usr/local/bin/cassie \"\$pkgdir/usr/local/bin/cassie\"
+          build() {
+            :
           }
-          " > PKGBUILD
-          tar -czf cassie-${VERSION}-1-x86_64.pkg.tar.gz -C pkg/cassie .
-          mv cassie-${VERSION}-1-x86_64.pkg.tar.gz ../dist/
-        # Create .rpm package for Fedora
-      # Create .rpm package for Fedora
-      - name: Create .rpm package (only on Linux)
-        if: matrix.goos == 'linux'
-        run: |
-          VERSION=${GITHUB_REF_NAME#v}
-
-          # Setup RPM build environment
-          mkdir -p rpmbuild/{BUILD,BUILDROOT,RPMS,SOURCES,SPECS,SRPMS}
-
-          # Prepare the binary in a source subfolder
-          mkdir -p rpmbuild/SOURCES/cassie-${VERSION}
-          cp dist/cassie_linux rpmbuild/SOURCES/cassie-${VERSION}/cassie
-
-          # Create tarball for Source0
-          tar -czf rpmbuild/SOURCES/cassie-${VERSION}.tar.gz -C rpmbuild/SOURCES cassie-${VERSION}
-
-          # Generate SPEC file
-          cat > rpmbuild/SPECS/cassie.spec <<EOF
-          Name: cassie
-          Version: ${VERSION}
-          Release: 1
-          Summary: CLI to change case
-          License: MIT
-          Group: Development/Tools
-          BuildArch: x86_64
-          Source0: cassie-${VERSION}.tar.gz
-
-          %description
-          CLI to change case
-
-          %prep
-          %setup -q
-
-          %install
-          mkdir -p %{buildroot}/usr/local/bin
-          cp cassie %{buildroot}/usr/local/bin/cassie
-          chmod +x %{buildroot}/usr/local/bin/cassie
-
-          %files
-          /usr/local/bin/cassie
-
-          %changelog
-          * $(date "+%a %b %d %Y") You <labs@dksengine.com> - ${VERSION}-1
-          - Initial RPM release
+          package() {
+            install -Dm755 "\$srcdir"/../pkg/change-case/usr/local/bin/change_case "\$pkgdir"/usr/local/bin/change_case
+          }
           EOF
+          cd pkgbuild
+          makepkg --nobuild --packagelist
+          BS_DIR=$(makepkg --packagelist)
+          BS_NAME=$(basename $BS_DIR)
+          cd ..
+          mv pkgbuild/$BS_NAME dist/change_case_linux.pkg.tar.zst
 
-              # Build the RPM
-              rpmbuild --define "_topdir $(pwd)/rpmbuild" -bb rpmbuild/SPECS/cassie.spec
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-${{ matrix.goos }}
+          path: dist/*
 
-              # Move resulting RPM into dist folder
-              find rpmbuild/RPMS -name "*.rpm" -exec mv {} dist/ \;
+  release:
+    runs-on: ubuntu-latest
+    needs: build
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
 
-        # Create Arch Linux package (PKG.TAR.ZST)
-      - name: Create Arch Linux package (only on Linux)
-        if: matrix.goos == 'linux'
-        run: |
-          VERSION=${GITHUB_REF_NAME#v}
-          mkdir -p cassie-arch/pkg/cassie/usr/local/bin
-          mkdir -p cassie-arch/src
-          cp dist/cassie_linux cassie-arch/pkg/cassie/usr/local/bin/cassie
-          cd cassie-arch
-          echo "
-          pkgname=cassie
-          pkgver=$VERSION
-          pkgrel=1
-          pkgdesc='CLI to change case'
-          arch=('x86_64')
-          license=('MIT')
-          source=()
-          package() {
-            install -Dm755 pkg/cassie/usr/local/bin/cassie \"\$pkgdir/usr/local/bin/cassie\"
-          }
-          " > PKGBUILD
-          tar -czf cassie-${VERSION}-1-x86_64.pkg.tar.gz -C pkg/cassie .
-          mv cassie-${VERSION}-1-x86_64.pkg.tar.gz ../dist/
-
-
-
-      # Create Windows .exe binary (only on Windows)
-      - name: Create Windows .exe binary (only on Windows)
-        if: matrix.goos == 'windows'
-        run: |
-          mkdir -p dist
-          GOOS=windows GOARCH=amd64 go build -o dist/cassie_windows.exe main.go
+      - name: Upload release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: dist/**/*

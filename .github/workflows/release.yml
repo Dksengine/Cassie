@@ -99,35 +99,57 @@ jobs:
           tar -czf cassie-${VERSION}-1-x86_64.pkg.tar.gz -C pkg/cassie .
           mv cassie-${VERSION}-1-x86_64.pkg.tar.gz ../dist/
         # Create .rpm package for Fedora
+      # Create .rpm package for Fedora
       - name: Create .rpm package (only on Linux)
         if: matrix.goos == 'linux'
         run: |
           VERSION=${GITHUB_REF_NAME#v}
-          mkdir -p rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
-          mkdir -p cassie-rpm/usr/local/bin
-          cp dist/cassie_linux cassie-rpm/usr/local/bin/cassie
-          tar -czvf rpmbuild/SOURCES/cassie.tar.gz -C cassie-rpm .
-          echo "
+
+          # Setup RPM build environment
+          mkdir -p rpmbuild/{BUILD,BUILDROOT,RPMS,SOURCES,SPECS,SRPMS}
+
+          # Prepare the binary in a source subfolder
+          mkdir -p rpmbuild/SOURCES/cassie-${VERSION}
+          cp dist/cassie_linux rpmbuild/SOURCES/cassie-${VERSION}/cassie
+
+          # Create tarball for Source0
+          tar -czf rpmbuild/SOURCES/cassie-${VERSION}.tar.gz -C rpmbuild/SOURCES cassie-${VERSION}
+
+          # Generate SPEC file
+          cat > rpmbuild/SPECS/cassie.spec <<EOF
           Name: cassie
-          Version: $VERSION
+          Version: ${VERSION}
           Release: 1
           Summary: CLI to change case
           License: MIT
           Group: Development/Tools
           BuildArch: x86_64
+          Source0: cassie-${VERSION}.tar.gz
+
           %description
           CLI to change case
+
           %prep
-          %setup -q -c -T
+          %setup -q
+
           %install
           mkdir -p %{buildroot}/usr/local/bin
-          cp -a * %{buildroot}/usr/local/bin/
+          cp cassie %{buildroot}/usr/local/bin/cassie
+          chmod +x %{buildroot}/usr/local/bin/cassie
+
           %files
           /usr/local/bin/cassie
+
           %changelog
-          " > rpmbuild/SPECS/cassie.spec
-          rpmbuild -bb rpmbuild/SPECS/cassie.spec
-          find rpmbuild/RPMS -name "*.rpm" -exec mv {} dist/ \;
+          * $(date "+%a %b %d %Y") You <labs@dksengine.com> - ${VERSION}-1
+          - Initial RPM release
+          EOF
+
+              # Build the RPM
+              rpmbuild --define "_topdir $(pwd)/rpmbuild" -bb rpmbuild/SPECS/cassie.spec
+
+              # Move resulting RPM into dist folder
+              find rpmbuild/RPMS -name "*.rpm" -exec mv {} dist/ \;
 
         # Create Arch Linux package (PKG.TAR.ZST)
       - name: Create Arch Linux package (only on Linux)

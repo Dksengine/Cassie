@@ -37,17 +37,16 @@ Version: ${GITHUB_REF_NAME}
 Architecture: amd64
 Maintainer: You <labs@dksengine.com>
 Description: CLI to change case" > myapp/DEBIAN/control
-
           mkdir -p myapp/usr/local/bin
           cp dist/change_case_linux myapp/usr/local/bin/change_case
           dpkg-deb --build myapp
           mv myapp.deb dist/change_case_linux.deb
 
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: dist-${{ matrix.goos }}
-          path: dist/*
+          name: Upload artifact
+          uses: actions/upload-artifact@v4
+          with:
+            name: dist-${{ matrix.goos }}
+            path: dist/*
 
   release:
     runs-on: ubuntu-latest

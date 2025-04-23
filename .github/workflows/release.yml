@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        goos: [linux, windows]
+        goos: [linux, windows, macos]
         goarch: [amd64]
 
     steps:
@@ -28,13 +28,14 @@ jobs:
           fi
           GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -o dist/cassie_${{ matrix.goos }}${EXT} main.go
 
-      - name: Create .deb package (only on Linux)
+      # Create .deb package for Ubuntu (only on Ubuntu)
+      - name: Create .deb package (only on Ubuntu)
         if: matrix.goos == 'linux'
         run: |
           mkdir -p myapp/DEBIAN
-          # Remove 'v' from version for Debian compatibility
+          # Remove 'v' from version for compatibility
           VERSION=${GITHUB_REF_NAME#v}
-          echo "Package: change-case" > myapp/DEBIAN/control
+          echo "Package: cassie" > myapp/DEBIAN/control
           echo "Version: $VERSION" >> myapp/DEBIAN/control
           echo "Architecture: amd64" >> myapp/DEBIAN/control
           echo "Maintainer: You <labs@dksengine.com>" >> myapp/DEBIAN/control
@@ -43,6 +44,38 @@ jobs:
           cp dist/cassie_linux myapp/usr/local/bin/cassie
           dpkg-deb --build myapp
           mv myapp.deb dist/cassie_linux.deb
+
+      # Create .rpm package for Fedora (only on Fedora)
+      - name: Create .rpm package (only on Fedora)
+        if: matrix.goos == 'linux'
+        run: |
+          mkdir -p myapp/usr/local/bin
+          cp dist/cassie_linux myapp/usr/local/bin/cassie
+          fpm -s dir -t rpm -n cassie -v $VERSION --prefix /usr/local myapp/usr/local/bin/cassie
+          mv cassie-$VERSION-1.x86_64.rpm dist/cassie_fedora.rpm
+
+      # Create Arch package for Arch Linux (only on Arch)
+      - name: Create Arch package (only on Arch)
+        if: matrix.goos == 'linux'
+        run: |
+          mkdir -p myapp/usr/local/bin
+          cp dist/cassie_linux myapp/usr/local/bin/cassie
+          fpm -s dir -t pacman -n cassie -v $VERSION --prefix /usr/local myapp/usr/local/bin/cassie
+          mv cassie-$VERSION-1-x86_64.pkg.tar.zst dist/cassie_arch.pkg.tar.zst
+
+      - name: Create Windows binary package (only on Windows)
+        if: matrix.goos == 'windows'
+        run: |
+          mkdir -p dist
+          cp dist/cassie_windows.exe dist/cassie_windows.zip
+          zip -r dist/cassie_windows.zip dist/cassie_windows.exe
+
+      - name: Create macOS binary package (only on macOS)
+        if: matrix.goos == 'macos'
+        run: |
+          mkdir -p dist
+          cp dist/cassie_macos dist/cassie_macos.zip
+          zip -r dist/cassie_macos.zip dist/cassie_macos
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4

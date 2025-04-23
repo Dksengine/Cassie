@@ -28,7 +28,7 @@ jobs:
           fi
           GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -o dist/change_case_${{ matrix.goos }}${EXT} main.go
 
-      - name: Create .deb package (only on Linux)
+      - name: Create .deb package 
         if: matrix.goos == 'linux'
         run: |
           mkdir -p myapp/DEBIAN
@@ -43,9 +43,9 @@ jobs:
           dpkg-deb --build myapp
           mv myapp.deb dist/change_case_linux.deb
 
-          - name: Create Arch Linux package (only on Linux)
-          if: matrix.goos == 'linux'
-          run: |
+      - name: Create Arch Linux package
+        if: matrix.goos == 'linux'
+        run: |
             VERSION=${GITHUB_REF_NAME#v}
             mkdir -p pkgbuild
             cat <<EOF > pkgbuild/PKGBUILD

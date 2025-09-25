@@ -27,6 +27,7 @@ jobs:
             EXT=".exe"
           fi
           GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -o dist/change_case_${{ matrix.goos }}${EXT} main.go
+          echo ${{ github.ref_name }}
 
       - name: Package Windows binary
         if: matrix.goos == 'windows'
@@ -41,7 +42,7 @@ jobs:
           mkdir -p myapp/DEBIAN
           cat <<EOF > myapp/DEBIAN/control
           Package: change-case
-          Version: ${GITHUB_REF_NAME#v}
+          Version: ${{ github.ref_name }}
           Architecture: amd64
           Maintainer: You <labs@dksengine.com>
           Description: CLI to change case

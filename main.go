@@ -37,6 +37,26 @@ func main() {
 	PROGRAM_NAME := "change_case"
 
 	args := os.Args
+
+	help_directives := "sc [snake -> camel]\n" +
+		"pc [pascal -> camel]\n" +
+		"sp [snake -> pascal]\n" +
+		"ps [pascal -> snake]\n" +
+		"cs [camel -> snake]\n" +
+		"cp [camel -> pascal]"
+
+	if len(args) <= 2 {
+		fmt.Println("Specify the input output directives")
+		fmt.Printf("example: %s test.js pc [pascal -> camel] \n", PROGRAM_NAME)
+		os.Exit(1)
+	}
+
+	if len(args[2]) < 2 {
+		fmt.Println("Select a formato like this:")
+		fmt.Println(help_directives)
+		os.Exit(1)
+	}
+
 	input, err := os.ReadFile(args[1])
 	if err != nil {
 		fmt.Println("Problem with reading the file")
@@ -57,25 +77,6 @@ func main() {
 	}
 
 	selectedLanguage := cc_lib.LoadLang(langs, ext)
-
-	help_directives := "sc [snake -> camel]\n" +
-		"pc [pascal -> camel]\n" +
-		"sp [snake -> pascal]\n" +
-		"ps [pascal -> snake]\n" +
-		"cs [camel -> snake]\n" +
-		"cp [camel -> pascal]"
-
-	if len(args) <= 2 {
-		fmt.Println("Specify the input output directives")
-		fmt.Printf("example: %s test.js pc [pascal -> camel] \n", PROGRAM_NAME)
-		os.Exit(1)
-	}
-
-	if len(args[2]) < 2 {
-		fmt.Println("Select a formato like this:")
-		fmt.Println(help_directives)
-		os.Exit(1)
-	}
 
 	from := args[2][0]
 	to := args[2][1]

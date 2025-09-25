@@ -35,6 +35,12 @@ A simple cli utility to change the case style in your document. It supports seve
 go run main.go <file-name> <options> 
 ```
 
+### Compile
+
+```bash
+go build -o cassie
+```
+
 ### Example
 
 ```bash
@@ -88,7 +94,7 @@ The program will detect the language of the input file, and perform a case conve
 
 > **Warning:**  
 >
-> If you are using standard or other librsries they'll be changed as well. 
+> If you are using standard or other libraries they'll be changed as well. 
 >
 >
 > **std::for_each(..)**

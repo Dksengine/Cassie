@@ -42,7 +42,7 @@ jobs:
           mkdir -p myapp/DEBIAN
           cat <<EOF > myapp/DEBIAN/control
           Package: change-case
-          Version: ${{ github.ref_name }}
+          Version: "${GITHUB_REF_NAME#v}"
           Architecture: amd64
           Maintainer: You <labs@dksengine.com>
           Description: CLI to change case

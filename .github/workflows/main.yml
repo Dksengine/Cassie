@@ -26,14 +26,14 @@ jobs:
           if [ "${{ matrix.goos }}" == "windows" ]; then
             EXT=".exe"
           fi
-          GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -o dist/change_case_${{ matrix.goos }}${EXT} main.go
+          GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -o dist/cassie_${{ matrix.goos }}${EXT} main.go
           echo ${{ github.ref_name }}
 
       - name: Package Windows binary
         if: matrix.goos == 'windows'
         run: |
           cd dist
-          zip change_case_windows.zip change_case_windows.exe
+          zip cassie_windows.zip cassie_windows.exe
           cd ..
 
       - name: Create .deb package (only on Linux)
@@ -49,9 +49,9 @@ jobs:
           EOF
 
           mkdir -p myapp/usr/local/bin
-          cp dist/change_case_linux myapp/usr/local/bin/change_case
+          cp dist/cassie_linux myapp/usr/local/bin/cassie
           dpkg-deb --build myapp
-          mv myapp.deb dist/change_case_linux.deb
+          mv myapp.deb dist/cassie_linux.deb
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4

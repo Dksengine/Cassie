@@ -28,26 +28,29 @@ jobs:
           fi
           GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} go build -o dist/change_case_${{ matrix.goos }}${EXT} main.go
 
+      - name: Package Windows binary
+        if: matrix.goos == 'windows'
+        run: |
+          cd dist
+          zip change_case_windows.zip change_case_windows.exe
+          cd ..
+
       - name: Create .deb package (only on Linux)
         if: matrix.goos == 'linux'
         run: |
           mkdir -p myapp/DEBIAN
-          echo "Package: change-case
-Version: ${GITHUB_REF_NAME}
-Architecture: amd64
-Maintainer: You <labs@dksengine.com>
-Description: CLI to change case" > myapp/DEBIAN/control
+          cat <<EOF > myapp/DEBIAN/control
+          Package: change-case
+          Version: ${{ github.ref_name }}
+          Architecture: amd64
+          Maintainer: You <labs@dksengine.com>
+          Description: CLI to change case
+          EOF
 
           mkdir -p myapp/usr/local/bin
           cp dist/change_case_linux myapp/usr/local/bin/change_case
           dpkg-deb --build myapp
           mv myapp.deb dist/change_case_linux.deb
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: dist-${{ matrix.goos }}
-          path: dist/*
 
   release:
     runs-on: ubuntu-latest
@@ -63,3 +66,4 @@ Description: CLI to change case" > myapp/DEBIAN/control
           files: dist/**/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
